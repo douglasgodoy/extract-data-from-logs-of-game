@@ -1,7 +1,5 @@
 # Get Statistics API
 
-A brief description of what this project does and who it's for
-
 ## Informações Gerais
 
 Esta API permite obter estatísticas de partidas de jogadores.
