@@ -57,7 +57,7 @@ export function getResumeFromKills(data: string[], result: ResultType) {
     );
 
     if (match) {
-      const [, , , , , killerName, , mod] = match;
+      const [, , , , , killerName, victim, mod] = match;
 
       if (killerName === "<world>") result.world.kills++;
 
@@ -67,4 +67,17 @@ export function getResumeFromKills(data: string[], result: ResultType) {
       result.causes[cause] += 1;
     }
   }
+}
+
+export function getLogsOfMatch(
+  match: { init: number; end: number },
+  splitedDataByRaw: string[]
+) {
+  let array = [];
+  for (let index = match.init; index < match.end + 1; index++) {
+    const raw = splitedDataByRaw[index];
+    array.push(raw);
+  }
+
+  return array;
 }

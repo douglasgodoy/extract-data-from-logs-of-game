@@ -1,73 +1,212 @@
 swagger: "2.0"
 info:
   version: "1.0.0"
-  title: "API de Estatísticas de Jogos"
-  description: "API para consulta de estatísticas de jogos de tiro"
-basePath: "/"
+  title: Get Details From Statistic
+  description: Get details from a specific match statistic
+host: localhost:3000
+basePath: /
 schemes:
-  - "http"
-consumes:
-  - "application/json"
-produces:
-  - "application/json"
+  - http
 paths:
-  /:
+  /players/statistics/{matchId}:
     get:
-      description: "Retorna uma mensagem de boas-vindas"
+      tags:
+        - "Players"
+      summary: "Get player statistics for a specific match"
+      description: "Returns the ranking of players for a specific match identified by `matchId`"
+      parameters:
+        - name: "matchId"
+          in: "path"
+          description: "ID of the match"
+          required: true
+          type: "integer"
       responses:
         200:
-          description: "Mensagem de boas-vindas"
+          description: "OK"
           schema:
             type: "object"
             properties:
+              error:
+                type: "boolean"
+                example: false
+              ranking:
+                type: "object"
+                properties:
+                  
+                  1:
+                    type: "object"
+                    properties:
+                      name:
+                        type: "string"
+                      points:
+                        type: "integer"
+                  2:
+                    type: "object"
+                    properties:
+                      name:
+                        type: "string"
+                      points:
+                        type: "integer"
+                  3:
+                    type: "object"
+                    properties:
+                      name:
+                        type: "string"
+                      points:
+                        type: "integer"
+                  4:
+                    type: "object"
+                    properties:
+                      name:
+                        type: "string"
+                      points:
+                        type: "integer"
+        400:
+          description: "Bad Request"
+          schema:
+            type: "object"
+            properties:
+              error:
+                type: "boolean"
               message:
                 type: "string"
-                example: "Hello World!"
-  /deaths:
+        404:
+          description: Statistics not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: "Match not found"
+  /statistics:
     get:
-      description: "Retorna as estatísticas de mortes em jogo"
+      summary: Get game statistics
+      description: Retrieve game statistics including the number of matches played, kills, deaths, and kills between players.
+      produces:
+        - application/json
       responses:
         200:
-          description: "Estatísticas de mortes"
+          description: Successfully retrieved game statistics
           schema:
-            $ref: "#/definitions/ResultType"
+            $ref: "#/definitions/StatisticsResponse"
+        400:
+          description: Error retrieving game statistics
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /statistics/{id}:
+    get:
+      tags:
+        - Statistics
+      summary: Get details from a specific match statistic
+      description: Get details from a specific match statistic based on the ID passed as parameter
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of the match statistic to retrieve
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+             $ref: "#/definitions/StatisticsResponse"
+        400:
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              error:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: "ERROR MESSAGE"
+        404:
+          description: Statistics not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: "Match not found"
 definitions:
-  Mods:
-    type: "object"
+  StatisticsResponse:
+    type: object
     properties:
-      MOD_TRIGGER_HURT:
-        type: "number"
-      MOD_ROCKET_SPLASH:
-        type: "number"
-      MOD_FALLING:
-        type: "number"
-      MOD_ROCKET:
-        type: "number"
-      MOD_RAILGUN:
-        type: "number"
-      MOD_MACHINEGUN:
-        type: "number"
-      MOD_SHOTGUN:
-        type: "number"
-      MOD_TELEFRAG:
-        type: "number"
-      MOD_BFG_SPLASH:
-        type: "number"
-      MOD_BFG:
-        type: "number"
-      MOD_CRUSH:
-        type: "number"
-  ResultType:
-    type: "object"
-    properties:
-      deaths:
-        type: "number"
-      world:
-        type: "object"
+      error:
+        type: boolean
+        example: false
+      results:
+        type: object
         properties:
-          kills:
-            type: "number"
-      killsBetweenPlayers:
-        type: "number"
-      causes:
-        $ref: "#/definitions/Mods"
+          world:
+            type: object
+            properties:
+              kills:
+                type: integer
+                example: 0
+          killsBetweenPlayers:
+            type: integer
+            example: 5
+          matchesPlayed:
+            type: integer
+            example: 1
+          deaths:
+            type: integer
+            example: 5
+          causes:
+            type: object
+            properties:
+              MOD_TRIGGER_HURT:
+                type: integer
+                example: 5
+              MOD_ROCKET_SPLASH:
+                type: integer
+                example: 5
+              MOD_FALLING:
+                type: integer
+                example: 5
+              MOD_ROCKET:
+                type: integer
+                example: 5
+              MOD_RAILGUN:
+                type: integer
+                example: 5
+              MOD_MACHINEGUN:
+                type: integer
+                example: 5
+              MOD_SHOTGUN:
+                type: integer
+                example: 5
+              MOD_TELEFRAG:
+                type: integer
+                example: 5
+              MOD_BFG_SPLASH:
+                type: integer
+                example: 5
+              MOD_BFG:
+                type: integer
+                example: 5
+              MOD_CRUSH:
+                type: integer
+                example: 5
+  ErrorResponse:
+    type: object
+    properties:
+      error:
+        type: boolean
+        description: Indicates whether an error occurred
+      message:
+        type: string
+        description: The error message
+    required:
+      - error
+      - message
