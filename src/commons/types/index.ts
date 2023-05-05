@@ -19,4 +19,5 @@ export type ResultType = {
   };
   killsBetweenPlayers: number;
   causes: Mods;
+  matchesPlayed: number;
 };

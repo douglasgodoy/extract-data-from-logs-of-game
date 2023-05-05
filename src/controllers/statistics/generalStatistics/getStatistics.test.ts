@@ -10,6 +10,9 @@ describe("getStatistics", () => {
   beforeEach(() => {
     req = {} as Request;
     res = {
+      status: jest.fn().mockReturnValue({
+        send: jest.fn(),
+      }),
       send: jest.fn(),
     } as unknown as Response;
   });
@@ -22,7 +25,7 @@ describe("getStatistics", () => {
     jest
       .spyOn(fs, "readFileSync")
       .mockReturnValue(
-        `22:06 Kill: 3 2 7: Player1 killed Player2 by MOD_SHOTGUN\n22:07 Kill: 4 2 7: Player1 killed Player2 by MOD_SHOTGUN\n22:08 Kill: 5 6 7: Player3 killed Player4 by MOD_SHOTGUN\n22:09 Kill: 5 6 7: Player3 killed Player4 by MOD_SHOTGUN\n22:10 Kill: 1022 1022 1022: <world> killed Player5 by MOD_TRIGGER_HURT\n22:11 Kill: 7 3 7: Player2 killed Player1 by MOD_SHOTGUN\n22:12 Kill: 6 5 7: Player4 killed Player3 by MOD_SHOTGUN\n22:13 Kill: 3 2 7: Player1 killed Player2 by MOD_SHOTGUN\n`
+        `1:47 InitGame: \n22:06 Kill: 3 2 7: Player1 killed Player2 by MOD_SHOTGUN\n22:07 Kill: 4 2 7: Player1 killed Player2 by MOD_SHOTGUN\n22:08 Kill: 5 6 7: Player3 killed Player4 by MOD_SHOTGUN\n22:09 Kill: 5 6 7: Player3 killed Player4 by MOD_SHOTGUN\n22:10 Kill: 1022 1022 1022: <world> killed Player5 by MOD_TRIGGER_HURT\n22:11 Kill: 7 3 7: Player2 killed Player1 by MOD_SHOTGUN\n22:12 Kill: 6 5 7: Player4 killed Player3 by MOD_SHOTGUN\n22:13 Kill: 3 2 7: Player1 killed Player2 by MOD_SHOTGUN\n1:47 ShutdownGame:`
       );
     await getStatisticsController(req, res);
 
@@ -45,9 +48,10 @@ describe("getStatistics", () => {
         MOD_BFG: 0,
         MOD_CRUSH: 0,
       },
+      matchesPlayed: 1,
     };
 
-    expect(res.send).toHaveBeenCalledWith({
+    expect(res.status(200).send).toHaveBeenCalledWith({
       error: false,
       results: expectedResults,
     });
@@ -61,7 +65,7 @@ describe("getStatistics", () => {
 
     await getStatisticsController(req, res);
 
-    expect(res.send).toHaveBeenCalledWith({
+    expect(res.status(400).send).toHaveBeenCalledWith({
       error: true,
       message: "File not found",
     });
